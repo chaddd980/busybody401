@@ -1,0 +1,7 @@
+{
+  "name": "busybody401",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
