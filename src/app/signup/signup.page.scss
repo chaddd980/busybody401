@@ -1,0 +1,74 @@
+p {
+    font-size: 0.8em;
+    color: #d2d2d2;
+}
+
+ion-label, .select-text {
+    margin-left: 10px;
+}
+
+.invalid {
+    border: 1px solid #ea6153;
+}
+
+.input2 {
+  // margin-top: 3vh;
+}
+
+ion-input {
+  border: 1px solid lightgrey;
+  border-radius: 20px;
+  font-size: 0.7em;
+  --padding-start: 20px !important;
+  --padding-top: 8px;
+  --padding-bottom: 8px;
+}
+
+.error {
+  margin-left: 10px;
+}
+
+@media only screen and (max-height: 667px) {
+  .button-div {
+    // position: absolute;
+    bottom: 10px;
+    width: 100%;
+    padding: 3vh 5vw 0;
+  }
+
+  .img-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .img-div img {
+    width: 90%;
+  }
+}
+
+@media only screen and (min-height: 668px) {
+  .button-div {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    padding: 3vh 5vw 0;
+  }
+}
+
+ion-list {
+  // margin-top: -4vh;
+}
+
+.button-div p {
+  font-size: 0.7em;
+  color: lightgrey;
+  font-weight: bold;
+  text-align: center;
+  margin: 25px 0 15px;
+}
+
+.button-div p span{
+  color: grey;
+  font-weight: bold;
+}

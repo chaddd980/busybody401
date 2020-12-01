@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "busybody401-c0624": {
+      "hosting": {
+        "app": [
+          "busybody401-c0624"
+        ]
+      }
+    }
+  }
+}
