@@ -44,6 +44,11 @@
         <ion-input placeholder="email" formControlName="email" type="email" [class.invalid] ="!signupForm.controls.email.valid && (signupForm.controls.email.dirty || submitAttempt)"></ion-input>
       </ion-item>
 
+      <ion-item class="input-item input2">
+        <!-- <ion-label position="floating">Email</ion-label> -->
+        <ion-input pattern="tel" placeholder="phone number" formControlName="pNumber" type="tel" [class.invalid] ="!signupForm.controls.pNumber.valid && (signupForm.controls.pNumber.dirty || submitAttempt)"></ion-input>
+      </ion-item>
+
       <!-- <ion-item class="error" *ngIf="!signupForm.controls.email.valid && (signupForm.controls.email.dirty || submitAttempt)">
         <p>Please enter a valid email</p>
       </ion-item> -->

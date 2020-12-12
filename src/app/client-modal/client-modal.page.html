@@ -26,6 +26,14 @@
     </ion-item>
 
     <ion-item>
+      <ion-input type="text" placeholder="Apt/Suite Number (Optional)" [(ngModel)]="apt"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input type="text" placeholder="Extra Info (Optional)" [(ngModel)]="extra"></ion-input>
+    </ion-item>
+
+    <ion-item>
       <ion-input type="text" placeholder="City" [(ngModel)]="city"></ion-input>
     </ion-item>
 
@@ -55,7 +63,7 @@
   </ion-list>
 
   <div class="button-div">
-    <ion-button size="large" class="create" color="primary" expand="block">Create Client</ion-button>
+    <ion-button size="large" class="create" (click)="createClient()" color="primary" expand="block">Create Client</ion-button>
     <ion-button size="large" (click)="dismiss()" color="danger" expand="block">Cancel</ion-button>
   </div>
 

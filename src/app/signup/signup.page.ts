@@ -20,6 +20,7 @@ export class SignupPage implements OnInit {
       lname: new FormControl('', Validators.compose([Validators.pattern('[a-zA-Z ]*'), Validators.required])),
       email: new FormControl('', Validators.compose([Validators.required, Validators.email])),
       password: new FormControl('', Validators.compose([Validators.minLength(8), Validators.required])),
+      pNumber: new FormControl('', Validators.compose([Validators.required])),
     });
   }
 
@@ -36,7 +37,7 @@ export class SignupPage implements OnInit {
       const result = await this.fs.signup(this.signupForm.value.email, this.signupForm.value.password, name);
       if (result) {
         console.log('result is: ', result);
-        const user = await this.fs.updateUserName(name);
+        const user = await this.fs.updateUserName(name, this.signupForm.value.pNumber);
         if (user) {
           this.router.navigate([ 'app/tabs/tab1' ]);
         }

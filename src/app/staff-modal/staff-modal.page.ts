@@ -7,6 +7,9 @@ import { ModalController } from '@ionic/angular';
   styleUrls: ['./staff-modal.page.scss'],
 })
 export class StaffModalPage implements OnInit {
+  public name: string;
+  public jobTitle: string;
+  public payRollSetUp: string;
 
   constructor(public modalCtrl: ModalController) { }
 

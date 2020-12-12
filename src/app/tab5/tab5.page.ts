@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { FirestoreService } from '../services/firestore.service';
@@ -41,6 +41,7 @@ const colors: any = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './tab5.page.html',
   styleUrls: ['./tab5.page.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class Tab5Page implements OnInit {
   public userAuth: Subscription;
@@ -81,6 +82,7 @@ export class Tab5Page implements OnInit {
   public activeDayIsOpen = false;
 
   constructor(public fs: FirestoreService, public router: Router) {
+    this.getShifts();
     this.userAuth = this.fs.signedIn.subscribe((user) => {
       if (!user) {
         this.router.navigate([ 'signin' ]);
@@ -89,13 +91,53 @@ export class Tab5Page implements OnInit {
   }
 
   public async ngOnInit() {
-    const event = {
-      start: new Date(),
-      end: addHours(new Date(), 2),
-      title: '12 hour shift at HumberView',
-      color: colors.blue,
-    };
-    this.events.push(event);
+    // const event = {
+    //   start: new Date(),
+    //   end: addHours(new Date(), 2),
+    //   title: '12 hour shift at HumberView',
+    //   color: colors.blue,
+    // };
+    // this.events.push(event);
+    // try {
+    //   await this.getShifts();
+    // } catch (err) {
+    //   console.log(err);
+    // }
+  }
+
+  public async getShifts() {
+    try {
+      const shiftsRef = await this.fs.getShifts();
+      shiftsRef.subscribe((shifts: any) => {
+        this.events = [];
+        console.log(shifts);
+        shifts.forEach((shift: any) => {
+          let color: any;
+          let status: string;
+          if (!shift.assigned) {
+            color = colors.red;
+            status = 'Unassigned';
+          } else if (shift.assigned && !shift.completed) {
+            color = colors.yellow;
+            status = 'Assigned to ' + shift.assignedTo.name;
+          } else {
+            color = colors.blue;
+            status = 'Completed by ' + shift.assignedTo.name;
+          }
+          const event = {
+            start: shift.dateStartTime.toDate(),
+            end: shift.dateEndTime.toDate(),
+            title: shift.hours[0] + shift.hours[1] +  ' hour shift at ' + shift.client + '. ' + status,
+            color,
+          };
+          this.events.push(event);
+          console.log(this.events);
+        });
+        this.refresh.next();
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   public dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {

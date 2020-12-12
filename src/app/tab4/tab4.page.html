@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header mode="ios" [translucent]="true">
   <ion-toolbar>
     <ion-title>
       <ion-title size="large">BusyBody401</ion-title>
@@ -6,8 +6,8 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding [fullscreen]="true">
-  <ion-header collapse="condense">
+<ion-content mode="ios" padding [fullscreen]="true">
+  <ion-header mode="ios" collapse="condense">
     <ion-toolbar>
       <ion-title size="large">BusyBody401</ion-title>
     </ion-toolbar>
@@ -19,6 +19,9 @@
         <ion-segment-button value="Assigned">
           <ion-label>Assigned</ion-label>
         </ion-segment-button>
+        <ion-segment-button value="Completed">
+          <ion-label>Completed</ion-label>
+        </ion-segment-button>
       </ion-segment>
     </ion-toolbar>
   </ion-header>
@@ -27,48 +30,153 @@
     <div class="button-div">
       <ion-button class="createButton" size="small" strong="true" color="primary" (click)="presentModal('client')">Creat Client</ion-button>
       <ion-button class="createButton" size="small" strong="true" color="primary" (click)="presentModal('shift')">Create Shift</ion-button>
-      <ion-button class="createButton" size="small" strong="true" color="primary" (click)="presentModal('staff')">Create Staff</ion-button>
+      <!-- <ion-button class="createButton" size="small" strong="true" color="primary" (click)="presentModal('staff')">Create Staff</ion-button> -->
     </div>
-    <ion-list *ngIf="!assigned">
-      <ion-card *ngFor="let shift of shifts">
-        <div *ngIf="!shifts.assigned">
-          <ion-card-header>
-            <ion-card-subtitle>{{ shift.dateStartTime.toDate() | date: 'mediumDate' }}</ion-card-subtitle>
-            <ion-card-title> {{ shift.client }} </ion-card-title>
-          </ion-card-header>
+    <ion-list *ngIf="unAssigned">
 
-          <ion-card-content>
-            <p class="card-p">Start Time: <span class="card-span">{{ shift.dateStartTime.toDate() | date: 'shortTime' }}</span></p>
-            <p class="card-p">End Time: <span class="card-span">{{ shift.dateEndTime.toDate() | date: 'shortTime' }}</span></p>
-            <p class="card-p">Break: <span class="card-span"> {{ 60 * shift.break }} Minutes</span></p>
-            <p class="card-p">Pay: <span class="card-span"> ${{ shift.pay }} Per Hour</span></p>
-            <p class="card-p">Type of Job: <span class="card-span"> {{ shift.jobTitle }} </span></p>
-            <div class="assign-div">
-              <ion-button size="large">Assign to staff</ion-button>
+      <div *ngIf="!unassignedShifts.length ">
+        <ion-card-header>
+          <ion-card-title>No Unassigned Shifts</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <img src="assets/images/noContent4.gif"/>
+        </ion-card-content>
+      </div>
+        <ion-card *ngFor="let shift of unassignedShifts">
+          <ion-item-sliding mode="ios">
+
+            <ion-item-options mode="ios" side="start">
+              <ion-item-option mode="ios" color="primary" (click)="duplicateShift(shift)">Duplicate</ion-item-option>
+            </ion-item-options>
+
+            <ion-item>
+            <div class="shiftDiv" *ngIf="!shift.assigned">
+                <ion-card-header>
+                  <ion-card-subtitle>{{ shift.dateStartTime.toDate() | date: 'mediumDate' }}</ion-card-subtitle>
+                  <ion-card-title> {{ shift.client }} </ion-card-title>
+                </ion-card-header>
+
+                <ion-card-content>
+                  <p class="card-p">Start Time: <span class="card-span">{{ shift.dateStartTime.toDate() | date: 'shortTime' }}</span></p>
+                  <p class="card-p">End Time: <span class="card-span">{{ shift.dateEndTime.toDate() | date: 'shortTime' }}</span></p>
+                  <p class="card-p" *ngIf="shift.break">Break: <span class="card-span"> {{ 60 * shift.break }} Minutes</span></p>
+                  <p class="card-p" *ngIf="shift.perHour">Pay: <span class="card-span"> ${{ shift.perHour }} Per Hour</span></p>
+                  <p class="card-p">Type of Job: <span class="card-span"> {{ shift.jobTitle }} </span></p>
+                  <p *ngIf="shift.shiftInfo !== 'N/A'" class="card-p">Shift Info: <span class="card-span"> {{ shift.shiftInfo }} </span></p>
+                  <!-- <div class="assign-div">
+                    <ion-button size="large">Assign to staff</ion-button>
+                  </div> -->
+                  <div class="assign-div">
+                    <ion-button color="tertiary" size="large" (click)="editShift(shift)">Edit Shift</ion-button>
+                  </div>
+                </ion-card-content>
             </div>
-          </ion-card-content>
-        </div>
-      </ion-card>
+            </ion-item>
+
+            <ion-item-options mode="ios" side="end">
+              <ion-item-option mode="ios" color="danger" (click)="deleteConfirmation(shift)">Delete</ion-item-option>
+            </ion-item-options>
+
+          </ion-item-sliding>
+        </ion-card>
+
     </ion-list>
 
     <ion-list *ngIf="assigned">
-      <ion-card *ngFor="let shift of shifts">
-        <div *ngIf="shifts.assigned">
-          <ion-card-header>
-            <ion-card-subtitle>{{ shift.dateStartTime.toDate() | date: 'mediumDate' }}</ion-card-subtitle>
-            <ion-card-title> {{ shift.client }} </ion-card-title>
-          </ion-card-header>
 
-          <ion-card-content>
-            <p class="card-p">Start Time: <span class="card-span">{{ shift.dateStartTime.toDate() | date: 'shortTime' }}</span></p>
-            <p class="card-p">End Time: <span class="card-span">{{ shift.dateEndTime.toDate() | date: 'shortTime' }}</span></p>
-            <p class="card-p">Break: <span class="card-span"> {{ 60 * shift.break }} Minutes</span></p>
-            <p class="card-p">Pay: <span class="card-span"> ${{ shift.pay }} Per Hour</span></p>
-            <p class="card-p">Type of Job: <span class="card-span"> {{ shift.jobTitle }} </span></p>
-            <p class="card-p">Assigned to: <span class="card-span"> {{ shift.staff }} </span></p>
-          </ion-card-content>
-        </div>
-      </ion-card>
+      <div *ngIf="!assignedShifts.length ">
+        <ion-card-header>
+          <ion-card-title>No Assigned Shifts</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <img src="assets/images/noContent4.gif"/>
+        </ion-card-content>
+      </div>
+        <ion-card *ngFor="let shift of assignedShifts">
+          <ion-item-sliding mode="ios">
+
+            <ion-item-options mode="ios" side="start">
+              <ion-item-option mode="ios" color="primary" (click)="duplicateShift(shift)">Duplicate</ion-item-option>
+            </ion-item-options>
+            <ion-item>
+              <div class="shiftDiv">
+                <ion-card-header>
+                  <ion-card-subtitle>{{ shift.dateStartTime.toDate() | date: 'mediumDate' }}</ion-card-subtitle>
+                  <ion-card-title> {{ shift.client }} </ion-card-title>
+                </ion-card-header>
+
+                <ion-card-content>
+                  <p class="card-p">Start Time: <span class="card-span">{{ shift.dateStartTime.toDate() | date: 'shortTime' }}</span></p>
+                  <p class="card-p">End Time: <span class="card-span">{{ shift.dateEndTime.toDate() | date: 'shortTime' }}</span></p>
+                  <p class="card-p">Break: <span class="card-span"> {{ 60 * shift.break }} Minutes</span></p>
+                  <p class="card-p">Pay: <span class="card-span"> ${{ shift.perHour }} Per Hour</span></p>
+                  <p class="card-p">Type of Job: <span class="card-span"> {{ shift.jobTitle }} </span></p>
+                  <p class="card-p">Assigned to: <span class="card-span"> {{ shift.assignedTo.name }} </span></p>
+                  <p *ngIf="shift.shiftInfo !== 'N/A'" class="card-p">Shift Info: <span class="card-span"> {{ shift.shiftInfo }} </span></p>
+                  <div class="assign-div">
+                    <ion-button (click)="editShift(shift)" color="tertiary" size="large">Edit Shift</ion-button>
+                  </div>
+                </ion-card-content>
+              </div>
+            </ion-item>
+            <ion-item-options mode="ios" side="end">
+              <ion-item-option mode="ios" color="danger" (click)="deleteConfirmation(shift)">Delete</ion-item-option>
+            </ion-item-options>
+
+          </ion-item-sliding>
+        </ion-card>
+
+    </ion-list>
+
+    <ion-list *ngIf="completed">
+
+      <div *ngIf="!completedShifts.length">
+        <ion-card-header>
+          <ion-card-title>No Completed Shifts</ion-card-title>
+        </ion-card-header>
+
+        <ion-card-content>
+          <img src="assets/images/noContent4.gif"/>
+        </ion-card-content>
+      </div>
+
+        <ion-card *ngFor="let shift of completedShifts">
+
+          <ion-item-sliding mode="ios">
+
+            <ion-item-options mode="ios" side="start">
+              <ion-item-option mode="ios" color="primary" (click)="duplicateShift(shift)">Duplicate</ion-item-option>
+            </ion-item-options>
+            <ion-item>
+
+              <div class="shiftDiv">
+                <ion-card-header>
+                  <ion-card-subtitle>{{ shift.dateStartTime.toDate() | date: 'mediumDate' }}</ion-card-subtitle>
+                  <ion-card-title> {{ shift.client }} </ion-card-title>
+                </ion-card-header>
+
+                <ion-card-content>
+                  <p class="card-p">Start Time: <span class="card-span">{{ shift.dateStartTime.toDate() | date: 'shortTime' }}</span></p>
+                  <p class="card-p">End Time: <span class="card-span">{{ shift.dateEndTime.toDate() | date: 'shortTime' }}</span></p>
+                  <p class="card-p">Break: <span class="card-span"> {{ 60 * shift.break }} Minutes</span></p>
+                  <p class="card-p">Pay: <span class="card-span"> ${{ shift.perHour }} Per Hour</span></p>
+                  <p class="card-p">Type of Job: <span class="card-span"> {{ shift.jobTitle }} </span></p>
+                  <p class="card-p">Assigned to: <span class="card-span"> {{ shift.assignedTo }} </span></p>
+                  <p *ngIf="shift.shiftInfo !== 'N/A'" class="card-p">Shift Info: <span class="card-span"> {{ shift.shiftInfo }} </span></p>
+                  <div class="assign-div">
+                    <ion-button color="tertiary" size="large" (click)="editShift(shift)">Edit Shift</ion-button>
+                  </div>
+                </ion-card-content>
+              </div>
+            </ion-item>
+            <ion-item-options mode="ios" side="end">
+              <ion-item-option mode="ios" color="danger" (click)="deleteConfirmation(shift)">Delete</ion-item-option>
+            </ion-item-options>
+
+          </ion-item-sliding>
+        </ion-card>
     </ion-list>
   </div>
 

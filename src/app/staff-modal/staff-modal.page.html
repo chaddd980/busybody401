@@ -10,7 +10,30 @@
       <ion-title size="large">Create New Staff</ion-title>
     </ion-toolbar>
   </ion-header>
-  <ion-button color="primary" expand="block">Create Staff</ion-button>
-  <ion-button (click)="dismiss()" color="danger" expand="block">Cancel</ion-button>
+
+  <ion-list>
+
+    <ion-item>
+      <ion-input type="text" placeholder="Name" [(ngModel)]="name"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input type="text" placeholder="Job Title" [(ngModel)]="jobTitle"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Is Their Payroll Set Up</ion-label>
+      <ion-select [(ngModel)]="payRollSetUp">
+        <ion-select-option value="PSW">Yes</ion-select-option>
+        <ion-select-option value="PSW">No</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+  </ion-list>
+
+  <div class="button-div">
+    <ion-button size="large" class="create" color="primary" expand="block">Create Client</ion-button>
+    <ion-button size="large" (click)="dismiss()" color="danger" expand="block">Cancel</ion-button>
+  </div>
 
 </ion-content>

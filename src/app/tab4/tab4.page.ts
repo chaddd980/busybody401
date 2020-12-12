@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { ClientModalPage } from '../client-modal/client-modal.page';
 import { FirestoreService } from '../services/firestore.service';
@@ -14,10 +14,16 @@ import { StaffModalPage } from '../staff-modal/staff-modal.page';
 })
 export class Tab4Page implements OnInit {
   public userAuth: any;
-  public shifts: any;
+  public completedShifts = [];
+  public assignedShifts = [];
+  public unassignedShifts = [];
   public assigned = false;
-  constructor(public fs: FirestoreService, public router: Router, public modalController: ModalController) {
+  public unAssigned = true;
+  public completed = false;
+  constructor(public fs: FirestoreService, public router: Router, public modalController: ModalController,
+              public alrtCtrl: AlertController) {
     this.userAuth = this.fs.signedIn.subscribe((user) => {
+      console.log(user);
       if (!user) {
         this.router.navigate([ 'signin' ]);
       }
@@ -26,30 +32,27 @@ export class Tab4Page implements OnInit {
 
   public async ngOnInit() {
     try {
-      const shifts = await this.fs.getShifts();
-      if (shifts) {
-        shifts.subscribe((data: any) => {
-          console.log(data);
-          this.shifts = data;
-          // this.shifts.forEach((element: any) => {
-          //   console.log(element);
-          //   this.fs.updateDate(element);
-          // });
-        });
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  public async getShifts() {
-    try {
-      this.shifts = await this.fs.getShifts();
-      if (this.shifts) {
-        console.log(this.shifts);
-      } else {
-        throw new Error('failed getting shifts');
-      }
+      const completedShifts = await this.fs.getCompletedShifts();
+      const assignedShifts = await this.fs.getAssignedShifts();
+      const unassignedShifts = await this.fs.getUnassignedShifts();
+      // if (completedShifts) {
+      completedShifts.subscribe((data: any) => {
+        console.log(data);
+        this.completedShifts = data;
+      });
+      // }
+      // if (assignedShifts) {
+      assignedShifts.subscribe((data: any) => {
+        console.log(data);
+        this.assignedShifts = data;
+      });
+      // }
+      // if (unassignedShifts) {
+      unassignedShifts.subscribe((data: any) => {
+        console.log(data);
+        this.unassignedShifts = data;
+      });
+      // }
     } catch (err) {
       console.log(err);
     }
@@ -60,12 +63,20 @@ export class Tab4Page implements OnInit {
     console.log('Segment is ', ev.detail.value);
     if (ev.detail.value === 'Assigned') {
       this.assigned = true;
-    } else {
+      this.unAssigned = false;
+      this.completed = false;
+    } else if (ev.detail.value === 'Unassigned') {
+      this.unAssigned = true;
+      this.completed = false;
       this.assigned = false;
+    } else {
+      this.completed = true;
+      this.assigned = false;
+      this.unAssigned = false;
     }
   }
 
-  public async presentModal(page: string) {
+  public async presentModal(page: string, shift?: any, duplicate?: any) {
     let modal: any;
     if (page === 'client') {
       modal = await this.modalController.create({
@@ -76,6 +87,10 @@ export class Tab4Page implements OnInit {
       modal = await this.modalController.create({
         component: ShiftModalPage,
         cssClass: 'my-custom-class',
+        componentProps: {
+          shift,
+          duplicate,
+        },
       });
     } else {
       modal = await this.modalController.create({
@@ -83,7 +98,60 @@ export class Tab4Page implements OnInit {
         cssClass: 'my-custom-class',
       });
     }
+    modal.onDidDismiss().then((data: any) => {
+      console.log('data');
+      console.log(data);
+    });
     return await modal.present();
+  }
+
+  public async deleteConfirmation(shift: any) {
+    console.log(shift);
+    const alert = await this.alrtCtrl.create({
+      cssClass: 'my-custom-class',
+      header: 'Are you sure you want to delete this shift?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => {
+            console.log('Confirm Cancel');
+          },
+        }, {
+          text: 'Yes',
+          handler: () => {
+            this.deleteShift(shift, shift.id, shift.assignedTo.id);
+            // this.getBoxes();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  public async editShift(shift: any) {
+    console.log(shift);
+    console.log(shift.payMultiplier);
+    this.presentModal('shift', shift, false);
+  }
+
+  public async duplicateShift(shift: any) {
+    console.log(shift);
+    console.log(shift.payMultiplier);
+    this.presentModal('shift', shift, true);
+  }
+
+  public async deleteShift(shift: any, shiftId: any, userId: any) {
+    try {
+      console.log(shift);
+      console.log(shiftId);
+      console.log(userId);
+      await this.fs.removeShiftToStaff(shift, shiftId, userId);
+      await this.fs.deleteShift(shift);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
 }

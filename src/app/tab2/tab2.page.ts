@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { FirestoreService } from '../services/firestore.service';
 
@@ -19,7 +19,7 @@ import {
   startOfDay,
   subDays,
 } from 'date-fns';
-import { Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 const colors: any = {
   red: {
@@ -41,6 +41,7 @@ const colors: any = {
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class Tab2Page implements OnInit, OnDestroy {
   public userAuth: Subscription;
@@ -117,6 +118,9 @@ export class Tab2Page implements OnInit, OnDestroy {
     // },
   ];
 
+  public user: any;
+  public isDataLoaded = false;
+
   public activeDayIsOpen = false;
   constructor(public fs: FirestoreService, public router: Router) {
     this.userAuth = this.fs.signedIn.subscribe((user) => {
@@ -127,6 +131,7 @@ export class Tab2Page implements OnInit, OnDestroy {
   }
 
   public ngOnInit() {
+    this.getUser();
     // const event = {
     //   start: subDays(endOfMonth(new Date()), 3),
     //   end: addDays(endOfMonth(new Date()), 3),
@@ -134,13 +139,46 @@ export class Tab2Page implements OnInit, OnDestroy {
     //   color: colors.blue,
     //   allDay: true,
     // };
-    const event = {
-      start: new Date(),
-      end: addHours(new Date(), 2),
-      title: '12 hour shift at HumberView',
-      color: colors.blue,
-    };
-    this.events.push(event);
+    // const event = {
+    //   start: new Date(),
+    //   end: addHours(new Date(), 2),
+    //   title: '12 hour shift at HumberView',
+    //   color: colors.blue,
+    // };
+    // this.events.push(event);
+  }
+
+  public async getUser() {
+    try {
+      this.user = await this.fs.getStaffInfo();
+      await this.user.subscribe((user: Observable<any>) => {
+        this.events = [];
+        console.log(user);
+        const shifts = user[0].shifts;
+        shifts.forEach((shift: any) => {
+          let color: any;
+          let status: string;
+          if (shift.assigned && !shift.completed) {
+            color = colors.yellow;
+            status = 'Not completed';
+          } else {
+            color = colors.blue;
+            status = 'Completed';
+          }
+          const event = {
+            start: shift.dateStartTime.toDate(),
+            end: shift.dateEndTime.toDate(),
+            title: shift.hours[0] + shift.hours[1] +  ' hour shift at ' + shift.client + '. ' + status,
+            color,
+          };
+          this.events.push(event);
+          console.log(this.events);
+        });
+        this.refresh.next();
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   public dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {

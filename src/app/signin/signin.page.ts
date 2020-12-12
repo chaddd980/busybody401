@@ -21,7 +21,8 @@ export class SigninPage implements OnInit {
     });
     this.userAuth = this.fs.signedIn.subscribe((user) => {
       if (user) {
-        this.router.navigate([ 'app/tabs/tab1' ]);
+        this.checkAdmin();
+        // this.router.navigate([ 'app/tabs/tab1' ]);
       }
     });
   }
@@ -44,20 +45,7 @@ export class SigninPage implements OnInit {
       const user = await this.fs.signIn(this.signinForm.value.email, this.signinForm.value.password);
       if (user) {
         console.log(user);
-        const isManager = await this.fs.checkAdmin();
-        isManager.subscribe((res: any) => {
-          console.log(res[0]);
-          console.log(res[0].manager);
-          let succeeded: any;
-          if (res[0].manager) {
-            succeeded = this.router.navigate([ 'app/tabs/tab4' ]);
-          } else {
-            succeeded = this.router.navigate([ 'app/tabs/tab1' ]);
-          }
-          if (!succeeded) {
-            this.login();
-          }
-        });
+        await this.checkAdmin();
       } else {
         throw new Error('Signin failed');
       }
@@ -65,6 +53,23 @@ export class SigninPage implements OnInit {
       console.log(error);
       this.submitAttempt = true;
     }
+  }
+
+  public async checkAdmin() {
+    const isManager = await this.fs.checkAdmin();
+    isManager.subscribe((res: any) => {
+      console.log(res[0]);
+      console.log(res[0].manager);
+      let succeeded: any;
+      if (res[0].manager) {
+        succeeded = this.router.navigate([ 'app/tabs/tab4' ]);
+      } else {
+        succeeded = this.router.navigate([ 'app/tabs/tab1' ]);
+      }
+      if (!succeeded) {
+        this.login();
+      }
+    });
   }
 
   public register() {

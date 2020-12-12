@@ -16,14 +16,10 @@
     <ion-item>
       <ion-label>Client</ion-label>
       <ion-select [(ngModel)]="clientChosen">
-        <ion-select-option *ngFor="let client of clients; let i = index" value="{{clients[i]}}">{{clients[i]}}</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ion-item>
-      <ion-label>Assign Shift to Staff (Optional)</ion-label>
-      <ion-select [(ngModel)]="staffChosen">
-        <ion-select-option *ngFor="let staff of staffs; let i = index" value="{{staffs[i]}}">{{staffs[i]}}</ion-select-option>
+        <ion-select-option *ngIf="shift" [value]="{ address: shift.address, clientshift: shift.client }">{{shift.client}}</ion-select-option>
+        <ng-container *ngFor="let client of clients">
+          <ion-select-option [value]="{ address: client.address, client: client.name }">{{client.name}}</ion-select-option>
+        </ng-container>
       </ion-select>
     </ion-item>
 
@@ -31,29 +27,43 @@
       <ion-label>Job Type</ion-label>
       <ion-select [(ngModel)]="jobType">
         <ion-select-option value="PSW">PSW</ion-select-option>
-        <ion-select-option value="PSW">RN</ion-select-option>
-        <ion-select-option value="PSW">RRN</ion-select-option>
+        <ion-select-option value="RN">RN</ion-select-option>
+        <ion-select-option value="RPN">RPN</ion-select-option>
       </ion-select>
     </ion-item>
 
     <ion-item>
-      <ion-input type="number" placeholder="pay" [(ngModel)]="pay"></ion-input>
+      <ion-label>Assign Shift to Staff (Optional)</ion-label>
+      <ion-select [(ngModel)]="staffChosen">
+        <ion-select-option *ngFor="let staff of staffs" [value]="{ id: staff.id, name: staff.name }">{{staff.name}} - {{staff.jobTitle}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item *ngIf="staffChosen">
+      <ion-label>Pay Per Hour</ion-label>
+      <ion-input type="number" placeholder="0" [(ngModel)]="pay"></ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-input type="text" placeholder="Shift Info" [(ngModel)]="shiftInfo"></ion-input>
+      <ion-label>Break</ion-label>
+      <ion-input type="number" placeholder="0" min="0" max="60" step="15" [(ngModel)]="break"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Shift Info</ion-label>
+      <ion-input type="text" placeholder="Any extra info about this shift" [(ngModel)]="shiftInfo"></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label>Start Date</ion-label>
-      <ion-datetime displayFormat="MM/DD/YYYY" pickerFormat="MMMM D YYYY" [(ngModel)]="startDate"></ion-datetime>
+      <ion-datetime displayFormat="MM/DD/YYYY h:mm A" pickerFormat="MMM D YY h mm A" [(ngModel)]="startDate"></ion-datetime>
     </ion-item>
 
     <ion-item>
       <ion-label>End Date</ion-label>
-      <ion-datetime displayFormat="MM/DD/YYYY" pickerFormat="MMMM D YYYY" [(ngModel)]="endDate"></ion-datetime>
+      <ion-datetime displayFormat="MM/DD/YYYY h:mm A" pickerFormat="MMM D YY h mm A"  [(ngModel)]="endDate"></ion-datetime>
     </ion-item>
-
+<!--
     <ion-item>
       <ion-label>Start Time</ion-label>
       <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A" [(ngModel)]="startTime"></ion-datetime>
@@ -62,12 +72,20 @@
     <ion-item>
       <ion-label>End Time</ion-label>
       <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A" [(ngModel)]="endTime"></ion-datetime>
-    </ion-item>
+    </ion-item> -->
 
   </ion-list>
 
-  <div class="button-div">
-    <ion-button size="large" class="create" color="primary" expand="block">Create Client</ion-button>
+  <div *ngIf="!shift" class="button-div">
+    <ion-button (click)="createShift()" size="large" class="create" color="primary" expand="block">Create Shift</ion-button>
+    <ion-button size="large" (click)="dismiss()" color="danger" expand="block">Cancel</ion-button>
+  </div>
+  <div *ngIf="shift && !duplicate" class="button-div">
+    <ion-button (click)="createShift()" size="large" class="create" color="primary" expand="block">Update Shift</ion-button>
+    <ion-button size="large" (click)="dismiss()" color="danger" expand="block">Cancel</ion-button>
+  </div>
+  <div *ngIf="shift && duplicate" class="button-div">
+    <ion-button (click)="createShift()" size="large" class="create" color="primary" expand="block">Duplicate Shift</ion-button>
     <ion-button size="large" (click)="dismiss()" color="danger" expand="block">Cancel</ion-button>
   </div>
 

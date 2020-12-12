@@ -18,11 +18,18 @@ ion-button {
 .button-div ion-button {
   margin-right: 3vw;
 }
+.shiftDiv {
+  width: 100%;
+}
 .assign-div {
   margin-top: 1.5vh;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.assign-div ion-button {
+  min-width: 50vw;
 }
 
 .card-p {
