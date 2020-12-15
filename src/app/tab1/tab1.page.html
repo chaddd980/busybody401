@@ -1,8 +1,6 @@
 <ion-header mode="ios" [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      <ion-title size="large">Dashboard</ion-title>
-    </ion-title>
+    <ion-title>Dashboard</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -13,12 +11,12 @@
     </ion-toolbar>
   </ion-header>
   <div class="main-div">
-    <h2 *ngIf="user" class="shiftGreeting">Hello {{user.name}}</h2>
+    <h2 *ngIf="user" class="shiftGreeting">Hello {{firstName}}</h2>
     <p class="shiftMessage">{{shiftMessage}}</p>
-    <div *ngIf="upcomingShifts.length === 0 && unfinishedShifts.length === 0" class="img-div">
+    <div *ngIf="upcomingShifts.length === 0 && unfinishedShifts.length === 0 && requestChangeShifts.length === 0" class="img-div">
       <img src="assets/images/noContent4.gif"/>
     </div>
-    <h1 *ngIf="upcomingShifts.length !== 0 && unfinishedShifts.length === 0">
+    <h1 *ngIf="upcomingShifts.length !== 0">
       <span class="number" *ngIf="days">{{days}}<span class="letter">d</span></span>
       <span class="number" *ngIf="hours"> {{hours}}<span class="letter">h</span></span>
       <span class="number" *ngIf="minutes"> {{minutes}}<span class="letter">m</span></span>
@@ -29,8 +27,52 @@
       <ion-button color="secondary" *ngIf="clockInOut == 'Clock In'" (click)="clockIn()">{{clockInOut}}</ion-button>
       <ion-button color="secondary" *ngIf="clockInOut == 'Clock Out'" (click)="clockOut()">{{clockInOut}}</ion-button>
     </div>
+    <ion-list *ngIf="unfinishedShifts.length !== 0">
+      <h1>Incomplete Shifts</h1>
+      <ion-card *ngFor="let shift of unfinishedShifts">
+        <div class="card-div">
+          <div class="date-div card-sub-div">
+            <h3 *ngIf="!shift.clockedInTime">{{ shift.dateStartTime.toDate() | date: 'EEE' }}</h3>
+            <h3 *ngIf="shift.clockedInTime">{{ shift.clockedInTime.toDate() | date: 'EEE' }}</h3>
+            <h3 *ngIf="!shift.clockedInTime" class="dateNumber">{{ shift.dateStartTime.toDate() | date: 'dd' }}</h3>
+            <h3 *ngIf="shift.clockedInTime" class="dateNumber">{{ shift.clockedInTime.toDate() | date: 'dd' }}</h3>
+          </div>
+          <div class="red-separator"></div>
+          <div class="info-div card-sub-div">
+            <h2>{{ shift.dateStartTime.toDate() | date: 'h:mm aaa'}} - {{ shift.dateEndTime.toDate() | date: 'h:mm aaa'}}</h2>
+            <p class="clientHeader">{{ shift.client }}</p>
+            <p>{{ shift.address }}</p>
+          </div>
+        </div>
+        <div class="card-button-div">
+          <ion-button fill="outline" color="danger" (click)="requestChangeAlert(shift)">Request Change</ion-button>
+          <ion-button color="danger" (click)="confirmShiftAlert(shift)">Confirm Shift</ion-button>
+        </div>
+      </ion-card>
+    </ion-list>
+
+    <ion-list *ngIf="requestChangeShifts.length !== 0">
+      <h1>Pending Change Approval</h1>
+      <ion-card *ngFor="let shift of requestChangeShifts">
+        <div class="card-div">
+          <div class="date-div card-sub-div">
+            <h3 *ngIf="!shift.clockedInTime">{{ shift.dateStartTime.toDate() | date: 'EEE' }}</h3>
+            <h3 *ngIf="shift.clockedInTime">{{ shift.clockedInTime.toDate() | date: 'EEE' }}</h3>
+            <h3 *ngIf="!shift.clockedInTime" class="dateNumber">{{ shift.dateStartTime.toDate() | date: 'dd' }}</h3>
+            <h3 *ngIf="shift.clockedInTime" class="dateNumber">{{ shift.clockedInTime.toDate() | date: 'dd' }}</h3>
+          </div>
+          <div class="orange-separator"></div>
+          <div class="info-div card-sub-div">
+            <h2>{{ shift.dateStartTime.toDate() | date: 'h:mm aaa'}} - {{ shift.dateEndTime.toDate() | date: 'h:mm aaa'}}</h2>
+            <p class="clientHeader">{{ shift.client }}</p>
+            <p>{{ shift.address }}</p>
+          </div>
+        </div>
+      </ion-card>
+    </ion-list>
+
     <ion-list *ngIf="upcomingShifts.length !== 0">
-      <h1>Complete Shifts</h1>
+      <h1>Upcoming Shifts</h1>
       <ion-card *ngFor="let shift of upcomingShifts">
         <div class="card-div">
           <div class="date-div card-sub-div">
@@ -43,28 +85,6 @@
             <p>{{ shift.client }}</p>
             <p>{{ shift.address }}</p>
           </div>
-        </div>
-      </ion-card>
-    </ion-list>
-
-    <ion-list *ngIf="unfinishedShifts.length !== 0">
-      <h1>Incomplete Shifts</h1>
-      <ion-card *ngFor="let shift of unfinishedShifts">
-        <div class="card-div">
-          <div class="date-div card-sub-div">
-            <h3>{{ shift.dateStartTime.toDate() | date: 'EEE' }}</h3>
-            <h3 class="dateNumber">{{ shift.dateStartTime.toDate() | date: 'dd' }}</h3>
-          </div>
-          <div class="red-separator"></div>
-          <div class="info-div card-sub-div">
-            <h2>{{ shift.dateStartTime.toDate() | date: 'h:mm aaa'}} - {{ shift.dateEndTime.toDate() | date: 'h:mm aaa'}}</h2>
-            <p class="clientHeader">{{ shift.client }}</p>
-            <p>{{ shift.address }}</p>
-          </div>
-        </div>
-        <div class="card-button-div">
-          <ion-button fill="outline" color="secondary" (click)="requestChangeAlert(shift)">Request Change</ion-button>
-          <ion-button color="secondary" (click)="confirmShiftAlert(shift)">Confrim Shift</ion-button>
         </div>
       </ion-card>
     </ion-list>

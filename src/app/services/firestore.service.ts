@@ -28,6 +28,8 @@ export class FirestoreService {
   public assignedShifts: Observable<any>;
   public unassignedShiftsRef: any;
   public unassignedShifts: Observable<any>;
+  public requestChangeShiftsRef: any;
+  public requestChangeShifts: Observable<any>;
   public clientsRef: any;
   public clients: Observable<any>;
   public staffRef: any;
@@ -50,6 +52,9 @@ export class FirestoreService {
 
     this.unassignedShiftsRef = this.afs.collection('shifts', (ref) => ref.where('assigned', '==', false));
     this.unassignedShifts = this.unassignedShiftsRef.valueChanges({ idField: 'id' });
+
+    this.requestChangeShiftsRef = this.afs.collection('shifts', (ref) => ref.where('request', '==', true));
+    this.requestChangeShifts = this.requestChangeShiftsRef.valueChanges({ idField: 'id' });
 
     this.clientsRef = this.afs.collection('clients');
     this.clients = this.clientsRef.valueChanges({ idField: 'id' });
@@ -127,6 +132,15 @@ export class FirestoreService {
     try {
       console.log(this.unassignedShifts);
       return this.unassignedShifts;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  public async getRequestShifts() {
+    try {
+      console.log(this.requestChangeShifts);
+      return this.requestChangeShifts;
     } catch (err) {
       console.log(err);
     }
@@ -285,10 +299,10 @@ export class FirestoreService {
 
   public async updateShiftInfo(shift: any, shiftId: any, staffChosen?: any) {
     try {
-      if (shift.clockedIn) {
+      // if (shift.clockedIn) {
         await this.shiftsRef.doc(shiftId).update(shift);
         await this.usersRef.doc(staffChosen.id).collection('shifts').doc(shiftId).update(shift);
-      }
+      // }
     } catch (err) {
       console.log(err);
     }

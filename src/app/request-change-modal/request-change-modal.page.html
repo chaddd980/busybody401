@@ -1,0 +1,37 @@
+<ion-header mode="ios" [translucent]="true">
+  <ion-toolbar>
+    <ion-title size="large">Request Change</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-header mode="ios" collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Request Change</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="main-div">
+    <h4 *ngIf="shift.clockedInTime">This shift is from {{shift.clockedInTime.toDate() | date: 'h:mm aaa'}} to {{shift.dateEndTime.toDate() | date: 'h:mm aaa'}} on {{shift.clockedInTime.toDate() | date: 'MMM d, y'}}</h4>
+    <h4 *ngIf="!shift.clockedInTime">This shift is from {{shift.dateStartTime.toDate() | date: 'h:mm aaa'}} to {{shift.dateEndTime.toDate() | date: 'h:mm aaa'}} on {{shift.dateStartTime.toDate() | date: 'MMM d, y'}}</h4>
+    <p>If this is incorrect please change and the request will be reviewed. If the change is approved you will be automatically be clocked out.</p>
+  </div>
+
+  <ion-list>
+    <ion-item>
+      <ion-label>Start DateTime</ion-label>
+      <ion-datetime displayFormat="MM/DD/YYYY h:mm A" pickerFormat="MMM D YY h mm A" [(ngModel)]="startDate"></ion-datetime>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>End DateTime</ion-label>
+      <ion-datetime displayFormat="MM/DD/YYYY h:mm A" pickerFormat="MMM D YY h mm A"  [(ngModel)]="endDate"></ion-datetime>
+    </ion-item>
+  </ion-list>
+
+  <div class="button-div">
+    <ion-button (click)="requestChange()" size="large" class="create" color="primary" expand="block">Request Change</ion-button>
+    <ion-button size="large" (click)="dismiss()" color="danger" expand="block">Cancel</ion-button>
+  </div>
+
+</ion-content>

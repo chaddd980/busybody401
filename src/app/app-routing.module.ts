@@ -58,6 +58,10 @@ const routes: Routes = [
     path: 'staff-modal',
     loadChildren: () => import('./staff-modal/staff-modal.module').then( m => m.StaffModalPageModule)
   },
+  {
+    path: 'request-change-modal',
+    loadChildren: () => import('./request-change-modal/request-change-modal.module').then( m => m.RequestChangeModalPageModule)
+  },
   // { path: '**', redirectTo: 'signin', pathMatch: 'full' },
 ];
 @NgModule({

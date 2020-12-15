@@ -5,11 +5,16 @@ import { AlertController, ModalController } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { FirestoreService } from '../services/firestore.service';
 
+import { RequestChangeModalPage } from '../request-change-modal/request-change-modal.page';
+
 import {
   addDays,
   addHours,
   addMinutes,
   endOfDay,
+  format,
+  getHours,
+  getMinutes,
   startOfDay,
 } from 'date-fns';
 
@@ -34,12 +39,14 @@ export class Tab1Page implements OnInit, OnDestroy {
   public shifts = [];
   public upcomingShifts = [];
   public unfinishedShifts = [];
+  public requestChangeShifts = [];
   public user: any;
   public clockedInTime = null;
   public clockedOutTime = null;
   public finalShiftPay = 0;
   public interval: any;
   public userRef: any;
+  public firstName: string;
   constructor(public fs: FirestoreService,
               public router: Router,
               private alertCtrl: AlertController,
@@ -111,45 +118,19 @@ export class Tab1Page implements OnInit, OnDestroy {
     }
   }
 
-  public async requestChangeAlert(shift: any) {
-    console.log(shift);
-    const alert = await this.alertCtrl.create({
-      
-    })
-  }
-
-  public async confirmShiftAlert(shift: any) {
-
-  }
-
-  public async requestChange(shift: any) {
-    try {
-      console.log(shift);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-  public async confirmShift(shift: any) {
-    try {
-      console.log(shift);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
   public clockOut() {
     if (this.nextShift.clockedIn) {
       this.clockedIn = false;
       this.clockInOut = 'Clock In';
-      const testTime = new Date();
-      let clockedOutTime = addHours(testTime, 9);
-      clockedOutTime = addMinutes(clockedOutTime, 8);
+      const clockedOutTime = new Date();
+      // let clockedOutTime = addHours(testTime, 9);
+      // clockedOutTime = addMinutes(clockedOutTime, 8);
       console.log(this.nextShift.clockedInTime);
       console.log(clockedOutTime);
       console.log(clockedOutTime.valueOf());
+      const shift = this.nextShift;
       const shiftTime = (clockedOutTime.valueOf() * 1000) - (this.nextShift.clockedInTime.seconds * 1000);
       console.log(shiftTime);
-      const shift = this.nextShift;
       if (!shift.hours[1]) {
         const hours = [Math.floor((shiftTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)), 0];
         console.log(hours);
@@ -184,6 +165,131 @@ export class Tab1Page implements OnInit, OnDestroy {
         console.log(shift);
       }
       this.fs.updateShiftInfo(shift, shift.id, this.user);
+    }
+  }
+
+  public async requestChangeAlert(shift: any) {
+    console.log(shift);
+    const modal = await this.modalCtrl.create({
+      component: RequestChangeModalPage,
+      cssClass: 'request-modal',
+      componentProps: {
+        shift,
+        user: this.user,
+      },
+    });
+
+    return await modal.present();
+  }
+
+  public async confirmShiftAlert(shift: any) {
+    console.log(shift);
+    let start: any;
+    let end = shift.dateEndTime.toDate();
+    if (shift.clockedInTime) {
+      start = shift.clockedInTime.toDate();
+    } else {
+      start = shift.dateStartTime.toDate();
+    }
+    const date = format(start, 'MMM Lo y');
+    start = format(start, 'h:mm aaaa');
+    end = format(end, 'h:mm aaaa');
+    const alert = await this.alertCtrl.create({
+      header: 'Confirm Shift',
+      subHeader: 'Did you complete this shift on ' + date + ' from ' + start + ' to ' + end + '?',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel Confirm');
+          },
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            console.log('Confirm Shift');
+            if (shift.clockedInTime) {
+              shift.clockedInTime = shift.clockedInTime;
+            } else {
+              shift.clockedInTime = shift.dateStartTime;
+            }
+            shift.clockedOut = true;
+            shift.clockedOutTime = shift.dateEndTime;
+            shift.clockedIn = false;
+            shift.completed = true;
+            this.calculateHours(shift, shift.clockedInTime, shift.clockedOutTime);
+            // this.fs.updateShiftInfo(shift, shift.id, this.user);
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  public async calculateHours(shift: any, clockedInTime: any, clockedOutTime: any) {
+    try {
+      const shiftTime = (clockedOutTime.seconds * 1000) - (clockedInTime.seconds * 1000);
+      console.log(shiftTime);
+      if (!shift.hours[1]) {
+        const firstShiftTime = (clockedOutTime.seconds * 1000) - (clockedInTime.seconds * 1000);
+        let hourOne = Math.floor((firstShiftTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minOne = Math.floor((firstShiftTime % (1000 * 60 * 60)) / (1000 * 60));
+        const testOne = (Math.round((minOne / 60) * 10) / 10).toFixed(1);
+        minOne = Number(testOne);
+        hourOne += minOne;
+        const hours = [hourOne, 0];
+        console.log(hours);
+        // const hours = [Math.floor((shiftTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)), 0];
+        // console.log(hours);
+        shift.completedHours = hours;
+        shift.completedPay =  shift.payMultiplier[0] * (shift.perHour * (hours[0] - shift.break)) +
+                              (shift.payMultiplier[1] * (shift.perHour * hours[1]));
+      } else {
+        const endofStartDate = endOfDay(clockedInTime.toDate());
+        const startofEndDate = startOfDay(clockedOutTime.toDate());
+        const firstShiftTime = (endofStartDate.valueOf()) - (clockedInTime.seconds * 1000);
+        const secondShiftTime = (clockedOutTime.seconds * 1000) - (startofEndDate.valueOf());
+        console.log(endofStartDate);
+        console.log(startofEndDate);
+        console.log(firstShiftTime);
+        console.log(secondShiftTime);
+        let hourOne = Math.floor((firstShiftTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let hourTwo = Math.floor((secondShiftTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minOne = Math.floor((firstShiftTime % (1000 * 60 * 60)) / (1000 * 60));
+        let minTwo = Math.floor((secondShiftTime % (1000 * 60 * 60)) / (1000 * 60));
+        const testOne = (Math.round((minOne / 60) * 10) / 10).toFixed(1);
+        const testTwo = (Math.round((minTwo / 60) * 10) / 10).toFixed(1);
+        minOne = Number(testOne);
+        minTwo = Number(testTwo);
+        hourOne += minOne;
+        hourTwo += minTwo;
+        const hours = [hourOne, hourTwo];
+        console.log(hours);
+        shift.completedHours = hours;
+        shift.completedPay =  shift.payMultiplier[0] * (shift.perHour * (hours[0] - shift.break)) +
+                              (shift.payMultiplier[1] * (shift.perHour * hours[1]));
+        console.log(shift);
+      }
+      await this.fs.updateShiftInfo(shift, shift.id, this.user);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  public async requestChange(shift: any) {
+    try {
+      console.log(shift);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  public async confirmShift(shift: any) {
+    try {
+      console.log(shift);
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -237,6 +343,7 @@ export class Tab1Page implements OnInit, OnDestroy {
       const userRef = await this.fs.getStaffInfo();
       userRef.subscribe((user: any) => {
         this.user = user[0];
+        this.firstName = this.user.name.split(' ')[0];
         console.log(this.user);
         this.getUserShifts();
       });
@@ -262,12 +369,21 @@ export class Tab1Page implements OnInit, OnDestroy {
         this.unfinishedShifts = this.shifts.filter((data: any) => {
           let unfinishedShifts: any;
           if (!data.clockedOut) {
-            unfinishedShifts = data;
-            return unfinishedShifts.dateEndTime.seconds * 1000 < this.currentTimestamp;
+            if (!data.request) {
+              unfinishedShifts = data;
+              console.log(unfinishedShifts);
+              return unfinishedShifts.dateEndTime.seconds * 1000 < this.currentTimestamp;
+            }
+          }
+        });
+        this.requestChangeShifts = this.shifts.filter((data: any) => {
+          if (data.request) {
+            return data;
           }
         });
         console.log(this.upcomingShifts);
         console.log(this.unfinishedShifts);
+        console.log(this.requestChangeShifts);
         console.log(this.shifts);
         if (this.upcomingShifts) {
           this.calculate();
@@ -304,7 +420,7 @@ export class Tab1Page implements OnInit, OnDestroy {
   public getShiftInfo(shiftStartTime: number, shiftEndTime?: number) {
     console.log(shiftStartTime, shiftEndTime);
     this.interval =  setInterval(() => {
-      console.log(shiftStartTime, shiftEndTime);
+      // console.log(shiftStartTime, shiftEndTime);
       const date = new Date();
       let timeBeforeShift: number;
       this.currentTimestamp = date.valueOf();
@@ -320,9 +436,9 @@ export class Tab1Page implements OnInit, OnDestroy {
           this.shiftMessage = 'Your shift starts in: ';
         }
       }
-      console.log(shiftStartTime);
-      console.log(shiftEndTime);
-      console.log(timeBeforeShift);
+      // console.log(shiftStartTime);
+      // console.log(shiftEndTime);
+      // console.log(timeBeforeShift);
       this.days = Math.floor(timeBeforeShift / (1000 * 60 * 60 * 24));
       this.hours = Math.floor((timeBeforeShift % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       this.minutes = Math.floor((timeBeforeShift % (1000 * 60 * 60)) / (1000 * 60));
