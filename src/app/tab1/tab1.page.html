@@ -63,10 +63,16 @@
           </div>
           <div class="orange-separator"></div>
           <div class="info-div card-sub-div">
-            <h2>{{ shift.dateStartTime.toDate() | date: 'h:mm aaa'}} - {{ shift.dateEndTime.toDate() | date: 'h:mm aaa'}}</h2>
+            <h4 class="changeHeader">Original Shift:</h4>
+            <h2 class="changeTime">{{ shift.dateStartTime.toDate() | date: 'h:mm aaa'}} - {{ shift.dateEndTime.toDate() | date: 'h:mm aaa'}}</h2>
+            <h4 class="changeHeader">Requested Change:</h4>
+            <h2 class="changeTime">{{ shift.requestedClockInTime.toDate() | date: 'h:mm aaa'}} - {{ shift.requestedClockOutTime.toDate() | date: 'h:mm aaa'}}</h2>
             <p class="clientHeader">{{ shift.client }}</p>
             <p>{{ shift.address }}</p>
           </div>
+        </div>
+        <div class="card-button-div2">
+          <ion-button expand="block" fill="outline" color="warning" (click)="requestChangeAlert(shift)">Edit Request</ion-button>
         </div>
       </ion-card>
     </ion-list>

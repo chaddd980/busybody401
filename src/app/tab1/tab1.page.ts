@@ -107,15 +107,44 @@ export class Tab1Page implements OnInit, OnDestroy {
   }
 
   public clockIn() {
-    if (!this.nextShift.clockedOut) {
-      this.clockedIn = true;
-      this.clockInOut = 'Clock Out';
-      this.clockedInTime = new Date();
-      const shift = this.nextShift;
-      shift.clockedIn = true;
-      shift.clockedInTime = this.clockedInTime;
-      this.fs.updateShiftInfo(shift, shift.id, this.user);
+    const time = new Date();
+    console.log(this.nextShift);
+    const startTimeDate = this.nextShift.dateStartTime.seconds * 1000;
+    const currentTime = time.valueOf();
+    console.log(startTimeDate);
+    console.log(currentTime);
+    const miniuteDifference = (startTimeDate - currentTime) / 1000 / 60;
+    console.log(miniuteDifference);
+    if (miniuteDifference > 15) {
+      this.clockInAlert();
+    } else {
+      if (!this.nextShift.clockedOut) {
+        this.clockedIn = true;
+        this.clockInOut = 'Clock Out';
+        this.clockedInTime = new Date();
+        const shift = this.nextShift;
+        shift.clockedIn = true;
+        shift.clockedInTime = this.clockedInTime;
+        this.fs.updateShiftInfo(shift, shift.id, this.user);
+      }
     }
+  }
+
+  public async clockInAlert() {
+    const alert = await this.alertCtrl.create({
+      header: 'Too Early to Clock In',
+      subHeader: 'Must be 15 minutes or less to clock in',
+      buttons: [
+        {
+          text: 'Okay',
+          role: 'cancel',
+          handler: () => {
+            console.log('Okay Confirm');
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 
   public clockOut() {

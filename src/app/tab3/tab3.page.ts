@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { FirestoreService } from '../services/firestore.service';
 
@@ -10,7 +11,7 @@ import { FirestoreService } from '../services/firestore.service';
 })
 export class Tab3Page implements OnInit, OnDestroy {
   public userAuth: Subscription;
-  constructor(public fs: FirestoreService, public router: Router) {
+  constructor(public fs: FirestoreService, public router: Router, private alertCtrl: AlertController) {
     this.userAuth = this.fs.signedIn.subscribe((user) => {
       if (!user) {
         this.router.navigate([ 'signin' ]);
@@ -28,6 +29,30 @@ export class Tab3Page implements OnInit, OnDestroy {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  public async signoutAlert() {
+    const alert = await this.alertCtrl.create({
+      header: 'Are You Sure You Want to Signout?',
+      // subHeader: 'Must be 15 minutes or less to clock in',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel Signout');
+          },
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            console.log('Signout');
+            this.signout();
+          },
+        },
+      ],
+    });
+    await alert.present();
   }
 
   public ngOnDestroy() {
