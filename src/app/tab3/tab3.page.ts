@@ -22,6 +22,22 @@ export class Tab3Page implements OnInit, OnDestroy {
   public ngOnInit() {
   }
 
+  public onProfileClick() {
+    this.router.navigate([ 'profile-page' ]);
+  }
+
+  public onPayrollClick() {
+    this.router.navigate([ 'payroll-page' ]);
+  }
+
+  public onShiftClick() {
+    this.router.navigate([ 'shift-history-page' ]);
+  }
+
+  public onPayClick() {
+    this.router.navigate([ 'pay-history-page' ]);
+  }
+
   public async signout() {
     try {
       await this.fs.signout();

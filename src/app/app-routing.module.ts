@@ -28,39 +28,59 @@ const routes: Routes = [
   },
   {
     path: 'cal-modal',
-    loadChildren: () => import('./cal-modal/cal-modal.module').then( m => m.CalModalPageModule)
+    loadChildren: () => import('./cal-modal/cal-modal.module').then( (m) => m.CalModalPageModule)
   },
   {
     path: 'tab4',
-    loadChildren: () => import('./tab4/tab4.module').then( m => m.Tab4PageModule)
+    loadChildren: () => import('./tab4/tab4.module').then( (m) => m.Tab4PageModule)
   },
   {
     path: 'tab5',
-    loadChildren: () => import('./tab5/tab5.module').then( m => m.Tab5PageModule)
+    loadChildren: () => import('./tab5/tab5.module').then( (m) => m.Tab5PageModule)
   },
   {
     path: 'tab6',
-    loadChildren: () => import('./tab6/tab6.module').then( m => m.Tab6PageModule)
+    loadChildren: () => import('./tab6/tab6.module').then( (m) => m.Tab6PageModule)
   },
   {
     path: 'tab7',
-    loadChildren: () => import('./tab7/tab7.module').then( m => m.Tab7PageModule)
+    loadChildren: () => import('./tab7/tab7.module').then( (m) => m.Tab7PageModule)
   },
   {
     path: 'client-modal',
-    loadChildren: () => import('./client-modal/client-modal.module').then( m => m.ClientModalPageModule)
+    loadChildren: () => import('./client-modal/client-modal.module').then( (m) => m.ClientModalPageModule)
   },
   {
     path: 'shift-modal',
-    loadChildren: () => import('./shift-modal/shift-modal.module').then( m => m.ShiftModalPageModule)
+    loadChildren: () => import('./shift-modal/shift-modal.module').then( (m) => m.ShiftModalPageModule)
   },
   {
     path: 'staff-modal',
-    loadChildren: () => import('./staff-modal/staff-modal.module').then( m => m.StaffModalPageModule)
+    loadChildren: () => import('./staff-modal/staff-modal.module').then( (m) => m.StaffModalPageModule)
   },
   {
     path: 'request-change-modal',
-    loadChildren: () => import('./request-change-modal/request-change-modal.module').then( m => m.RequestChangeModalPageModule)
+    loadChildren: () => import('./request-change-modal/request-change-modal.module').then( (m) => m.RequestChangeModalPageModule)
+  },
+  {
+    path: 'profile-page',
+    loadChildren: () => import('./profile-page/profile-page.module').then( (m) => m.ProfilePagePageModule),
+    canActivate: [AngularFireAuthGuard], data: { authGuardPipe: redirectUnauthorizedToLogin },
+  },
+  {
+    path: 'payroll-page',
+    loadChildren: () => import('./payroll-page/payroll-page.module').then( (m) => m.PayrollPagePageModule),
+    canActivate: [AngularFireAuthGuard], data: { authGuardPipe: redirectUnauthorizedToLogin },
+  },
+  {
+    path: 'shift-history-page',
+    loadChildren: () => import('./shift-history-page/shift-history-page.module').then( (m) => m.ShiftHistoryPagePageModule),
+    canActivate: [AngularFireAuthGuard], data: { authGuardPipe: redirectUnauthorizedToLogin },
+  },
+  {
+    path: 'pay-history-page',
+    loadChildren: () => import('./pay-history-page/pay-history-page.module').then( (m) => m.PayHistoryPagePageModule),
+    canActivate: [AngularFireAuthGuard], data: { authGuardPipe: redirectUnauthorizedToLogin },
   },
   // { path: '**', redirectTo: 'signin', pathMatch: 'full' },
 ];

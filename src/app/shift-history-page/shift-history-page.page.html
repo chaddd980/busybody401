@@ -1,0 +1,35 @@
+<ion-header mode="ios" [translucent]="true">
+  <ion-toolbar>
+    <div class="back-div">
+      <ion-icon class="headerIcon" (click)="back()" name="arrow-back-outline"></ion-icon>
+    </div>
+    <ion-title>Completed Shifts</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Completed Shifts</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-list *ngIf="shifts.length !== 0">
+    <ion-card *ngFor="let shift of shifts">
+      <div class="card-div">
+        <div class="date-div card-sub-div">
+          <h3 *ngIf="!shift.clockedInTime">{{ shift.dateStartTime.toDate() | date: 'EEE' }}</h3>
+          <h3 *ngIf="shift.clockedInTime">{{ shift.clockedInTime.toDate() | date: 'EEE' }}</h3>
+          <h3 *ngIf="!shift.clockedInTime" class="dateNumber">{{ shift.dateStartTime.toDate() | date: 'dd' }}</h3>
+          <h3 *ngIf="shift.clockedInTime" class="dateNumber">{{ shift.clockedInTime.toDate() | date: 'dd' }}</h3>
+        </div>
+        <div class="separator"></div>
+        <div class="info-div card-sub-div">
+          <h2>{{ shift.dateStartTime.toDate() | date: 'h:mm aaa'}} - {{ shift.dateEndTime.toDate() | date: 'h:mm aaa'}}</h2>
+          <p class="clientHeader">{{ shift.client }}</p>
+          <p>{{ shift.address }}</p>
+        </div>
+      </div>
+    </ion-card>
+  </ion-list>
+</ion-content>

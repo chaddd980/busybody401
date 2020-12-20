@@ -1,0 +1,49 @@
+<ion-content>
+  <div class="avatar-div">
+    <div class="back-div">
+      <ion-icon class="headerIcon" (click)="back()" name="arrow-back-outline"></ion-icon>
+      <h3>Profile</h3>
+      <ion-icon (click)="edit()" class="headerIcon" name="create-outline"></ion-icon>
+    </div>
+  </div>
+  <div class="avatar">{{initials}}</div>
+  <div class="main-div">
+  </div>
+  <ion-list lines="full">
+    <ion-item>
+      <ion-icon class="listIcon" color="secondary" name="person-outline"></ion-icon>
+      <ion-label>
+        <h1 *ngIf="user">{{user.name}}</h1>
+      </ion-label>
+      <h3 *ngIf="editing" class="editIcon" (click)="editItem('name')">Edit</h3>
+    </ion-item>
+    <ion-item>
+      <ion-icon class="listIcon" color="secondary" name="business-outline"></ion-icon>
+      <ion-label (click)="signoutAlert()">
+        <h1 *ngIf="user">{{user.jobTitle}}</h1>
+      </ion-label>
+      <!-- <h3 *ngIf="editing" class="editIcon" (click)="editItem('jobTitle')">Edit</h3> -->
+    </ion-item>
+    <ion-item>
+      <ion-icon class="listIcon" color="secondary" name="phone-portrait-outline"></ion-icon>
+      <ion-label>
+        <h1 *ngIf="user">{{user.pNumber}}</h1>
+      </ion-label>
+      <h3 *ngIf="editing" class="editIcon" (click)="editItem('pNumber')">Edit</h3>
+    </ion-item>
+    <ion-item>
+      <ion-icon class="listIcon" color="secondary" name="mail-outline"></ion-icon>
+      <ion-label>
+        <h1 *ngIf="user">{{user.email}}</h1>
+      </ion-label>
+      <!-- <h3 *ngIf="editing" class="editIcon" (click)="editItem('email')">Edit</h3> -->
+    </ion-item>
+    <ion-item>
+      <ion-icon class="listIcon" color="secondary" name="home-outline"></ion-icon>
+      <ion-label class="ion-text-wrap">
+        <h1 *ngIf="user">{{user.address}}</h1>
+      </ion-label>
+      <!-- <h3 *ngIf="editing" class="editIcon" (click)="editItem('address')">Edit</h3> -->
+    </ion-item>
+  </ion-list>
+</ion-content>

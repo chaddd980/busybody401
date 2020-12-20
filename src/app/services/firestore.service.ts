@@ -90,6 +90,17 @@ export class FirestoreService {
     }
   }
 
+  public async updateStaff(user: any) {
+    try {
+      console.log(user);
+      console.log(user.id);
+      const staffInfoRef = this.afs.collection('users', (ref) => ref.where('userId', '==', user.userId));
+      await staffInfoRef.doc(user.id).update(user);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   public async getUserShifts(user: any) {
     try {
       console.log(user);

@@ -1,0 +1,52 @@
+.card-div {
+  display: flex;
+  flex-direction: row;
+  padding: 2vh 5vw;
+}
+
+.back-div {
+  width: 20vw;
+  height: 20vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4vw;
+}
+
+.headerIcon {
+  font-size: 8vw;
+}
+
+.card-sub-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card-sub-div p {
+  margin: 0;
+}
+
+.separator {
+  width: 1vw;
+  border-radius: 1vw;
+  background: #3dc2ff;
+  margin: 0 3vw
+}
+
+.dateNumber {
+  font-size: 30px;
+}
+
+h3 {
+  margin: 0 0 10px;
+}
+
+h2 {
+  font-size: 21px;
+}
+
+.clientHeader {
+  font-weight: bold;
+  font-size: 16px;
+}
