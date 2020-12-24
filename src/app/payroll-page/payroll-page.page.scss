@@ -1,0 +1,29 @@
+.back-div {
+  width: 20vw;
+  height: 20vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4vw;
+}
+
+.headerIcon {
+  font-size: 8vw;
+}
+
+.input-div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.input-div .mat-form-field + .mat-form-field {
+  margin-left: 8px;
+  width: 42vw;
+}
+.input-div .mat-form-field {
+  width: 42vw;
+}
+
+.button-div button {
+  margin-right: 4vw;
+}

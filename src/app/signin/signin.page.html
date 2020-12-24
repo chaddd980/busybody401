@@ -45,9 +45,13 @@
 
   </ion-list>
 
-  <div class="button-div">
-    <ion-button expand="block" color="secondary" (click)="login()">Sign In!</ion-button>
-    <p>DON'T HAVE AN ACCOUNT? <span (click)="register()">SIGN UP</span></p>
-  </div>
-
 </ion-content>
+
+<ion-footer *ngIf="!isKeyBoardVisible" class="ion-no-border">
+  <ion-toolbar>
+    <div class="button-div">
+      <ion-button expand="block" color="secondary" (click)="login()">Sign In!</ion-button>
+      <p>DON'T HAVE AN ACCOUNT? <span (click)="register()">SIGN UP</span></p>
+    </div>
+  </ion-toolbar>
+</ion-footer>

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import { AngularFirestore } from '@angular/fire/firestore';
+import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { Platform } from '@ionic/angular';

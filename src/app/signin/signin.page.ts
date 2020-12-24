@@ -1,20 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 import { Subscription } from 'rxjs';
 import { FirestoreService } from '../services/firestore.service';
 
 @Component({
+  providers: [Keyboard],
   selector: 'app-signin',
   templateUrl: './signin.page.html',
   styleUrls: ['./signin.page.scss'],
 })
 export class SigninPage implements OnInit {
+  public isKeyBoardVisible = false;
   public signinForm: FormGroup;
   public userAuth: Subscription;
   public submitAttempt = false;
 
-  constructor(public fs: FirestoreService, public formBuilder: FormBuilder, public router: Router) {
+  constructor(public fs: FirestoreService, public formBuilder: FormBuilder, public router: Router, private keyboard: Keyboard) {
     this.signinForm = formBuilder.group({
       email: new FormControl('', Validators.compose([Validators.required, Validators.email])),
       password: new FormControl('', Validators.compose([Validators.minLength(8), Validators.required])),
@@ -34,6 +37,18 @@ export class SigninPage implements OnInit {
     if (this.userAuth) {
       this.userAuth.unsubscribe();
     }
+  }
+
+  public ionViewWillEnter() {
+    this.keyboard.onKeyboardWillShow().subscribe(() => {
+      this.isKeyBoardVisible = true;
+      // console.log('SHOWK');
+    });
+
+    this.keyboard.onKeyboardWillHide().subscribe(() => {
+      this.isKeyBoardVisible = false;
+      // console.log('HIDEK');
+    });
   }
 
   public async login() {

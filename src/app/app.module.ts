@@ -19,6 +19,8 @@ import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 // import { AngularFireDatabaseModule } from 'angular/fire/database';
 
+import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator/ngx';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -37,6 +39,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
   providers: [
     StatusBar,
     SplashScreen,
+    LaunchNavigator,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   ],
   bootstrap: [AppComponent],

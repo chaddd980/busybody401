@@ -67,10 +67,13 @@
     </form>
 
   </ion-list>
-
-  <div class="button-div">
-    <ion-button expand="block" color="secondary" (click)="save()">Register!</ion-button>
-    <p>ALREADY HAVE AN ACCOUNT? <span (click)="signin()">SIGN IN</span></p>
-  </div>
-
 </ion-content>
+
+<ion-footer *ngIf="!isKeyBoardVisible" class="ion-no-border">
+  <ion-toolbar>
+    <div class="button-div">
+      <ion-button expand="block" color="secondary" (click)="save()">Register!</ion-button>
+      <p>ALREADY HAVE AN ACCOUNT? <span (click)="signin()">SIGN IN</span></p>
+    </div>
+  </ion-toolbar>
+</ion-footer>

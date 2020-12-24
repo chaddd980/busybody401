@@ -1,6 +1,8 @@
 import { formatDate } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+// import { Capacitor, LaunchNavigator, LaunchNavigatorOptions, Plugins } from '@capacitor/core';
+import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator/ngx';
 import { AlertController, ModalController } from '@ionic/angular';
 import { Observable, Subscription } from 'rxjs';
 import { FirestoreService } from '../services/firestore.service';
@@ -50,7 +52,8 @@ export class Tab1Page implements OnInit, OnDestroy {
   constructor(public fs: FirestoreService,
               public router: Router,
               private alertCtrl: AlertController,
-              private modalCtrl: ModalController) {
+              private modalCtrl: ModalController,
+              private launchNavigator: LaunchNavigator) {
     this.userAuth = this.fs.signedIn.subscribe((user) => {
       if (!user) {
         this.router.navigate([ 'signin' ]);
@@ -68,6 +71,19 @@ export class Tab1Page implements OnInit, OnDestroy {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  public navigate() {
+    console.log(this.nextShift);
+    const options: LaunchNavigatorOptions = {
+      start: 'Toronto, On',
+    };
+
+    this.launchNavigator.navigate(this.nextShift.address, options)
+      .then(
+        (success) => console.log('Launched navigator'),
+        (error) => console.log('Error launching navigator', error),
+      );
   }
 
   public sortShifts(a: any, b: any) {
