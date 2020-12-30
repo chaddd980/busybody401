@@ -27,3 +27,11 @@
 .button-div button {
   margin-right: 4vw;
 }
+
+mat-horizontal-stepper .mat-horizontal-stepper-header {
+  padding: 0 18px;
+}
+
+mat-horizontal-stepper .mat-step-label {
+  min-width: 5px;
+}

@@ -28,27 +28,25 @@ export class SigninPage implements OnInit {
         // this.router.navigate([ 'app/tabs/tab1' ]);
       }
     });
+    // this.keyboard.onKeyboardWillShow().subscribe(() => {
+    //   this.isKeyBoardVisible = true;
+    //   console.log('HIDEK');
+    //   console.log(this.isKeyBoardVisible);
+    // });
   }
 
   public ngOnInit() {
+    // this.keyboard.onKeyboardWillHide().subscribe(() => {
+    //   this.isKeyBoardVisible = false;
+    //   console.log('SHOWK');
+    //   console.log(this.isKeyBoardVisible);
+    // });
   }
 
   public ngOnDestroy() {
     if (this.userAuth) {
       this.userAuth.unsubscribe();
     }
-  }
-
-  public ionViewWillEnter() {
-    this.keyboard.onKeyboardWillShow().subscribe(() => {
-      this.isKeyBoardVisible = true;
-      // console.log('SHOWK');
-    });
-
-    this.keyboard.onKeyboardWillHide().subscribe(() => {
-      this.isKeyBoardVisible = false;
-      // console.log('HIDEK');
-    });
   }
 
   public async login() {

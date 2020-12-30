@@ -1,3 +1,15 @@
 .toolbar-title {
   height: 100% !important;
 }
+ion-toolbar {
+  line-height: 1.1 !important;
+  color: pink;
+}
+
+mat-horizontal-stepper .mat-horizontal-stepper-header {
+  padding: 0 18px;
+}
+
+mat-horizontal-stepper .mat-step-label {
+  min-width: 5px;
+}
