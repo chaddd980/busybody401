@@ -32,10 +32,16 @@
   width: 85vw;
   border-radius: 5px;
 }
-// 
-// ion-toolbar {
-//   line-height: 1.1 !important;
-// }
+//
+ion-toolbar {
+  // line-height: 1.1 !important;
+  // height: 6vh !important;
+}
+
+ion-title {
+  display: flex;
+  align-items: center;
+}
 
 mat-horizontal-stepper .mat-horizontal-stepper-header {
   padding: 0 18px;

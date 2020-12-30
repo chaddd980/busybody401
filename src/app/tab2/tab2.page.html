@@ -1,4 +1,4 @@
-<ion-header mode="ios">
+<ion-header translucent="true" mode="ios">
   <ion-toolbar mode="ios">
     <ion-title mode="ios">
       {{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}
@@ -6,7 +6,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content mode="ios" [fullscreen]="true">
+<ion-content mode="ios" fullscreen="true">
   <ion-header mode="ios" collapse="condense">
     <ion-toolbar mode="ios">
       <ion-title mode="ios" size="large">{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</ion-title>
