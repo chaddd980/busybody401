@@ -1,4 +1,4 @@
-**# CS50 Final Project - Caregiving Staff Agency Scheduler**
+# CS50 Final Project - Caregiving Staff Agency Scheduler
 
 This project is an hybrid mobile application that allows a staffing agency schedule its employees for shifts and allows those employees to clock in and clock out from their shifts. I wanted to create this project to improve my understanding of authentication and realtime database use within mobile and web applications. This application has real world applications as this app will be used by my mother's business and it solves a real pain point for the business involving organizing employees and collecting information about shift duration.
 
