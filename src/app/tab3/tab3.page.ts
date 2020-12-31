@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { FirestoreService } from '../services/firestore.service';
 
@@ -10,8 +10,10 @@ import { FirestoreService } from '../services/firestore.service';
   styleUrls: ['tab3.page.scss'],
 })
 export class Tab3Page implements OnInit, OnDestroy {
+  public user: any;
   public userAuth: Subscription;
-  constructor(public fs: FirestoreService, public router: Router, private alertCtrl: AlertController) {
+  constructor(public fs: FirestoreService, public router: Router, private alertCtrl: AlertController,
+              public toastController: ToastController) {
     this.userAuth = this.fs.signedIn.subscribe((user) => {
       if (!user) {
         this.router.navigate([ 'signin' ]);
@@ -20,6 +22,28 @@ export class Tab3Page implements OnInit, OnDestroy {
   }
 
   public ngOnInit() {
+    this.getUser();
+  }
+
+  public async getUser() {
+    try {
+      const userRef = await this.fs.getStaffInfo();
+      userRef.subscribe((user: any) => {
+        this.user = user[0];
+        console.log(this.user);
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  public async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      color: 'danger',
+      duration: 2000,
+    });
+    toast.present();
   }
 
   public onProfileClick() {
@@ -27,7 +51,13 @@ export class Tab3Page implements OnInit, OnDestroy {
   }
 
   public onPayrollClick() {
-    this.router.navigate([ 'payroll-page' ]);
+    if (this.user.payrollProcessing) {
+      this.presentToast('The payroll info you submitted is being processed');
+    } else if (this.user.payrollSetUp) {
+      this.presentToast('Payroll has already been set up');
+    } else {
+      this.router.navigate([ 'payroll-page' ]);
+    }
   }
 
   public onShiftClick() {

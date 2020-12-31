@@ -74,38 +74,6 @@ export class PayrollPagePage implements OnInit {
     }
   }
 
-  // public validateDOB() {
-  //   if (!this.dob) {
-  //     this.presentToast('Please Enter Date of Birth');
-  //   } else {
-  //     this.validateAddress();
-  //   }
-  // }
-  //
-  // public validateAddress() {
-  //   if (!this.address) {
-  //     this.presentToast('Please Enter Address');
-  //   } else {
-  //     this.validateProvince();
-  //   }
-  // }
-  //
-  // public validateProvince() {
-  //   if (!this.provinceSelected) {
-  //     this.presentToast('Please Enter Province');
-  //   } else {
-  //     this.validateCity();
-  //   }
-  // }
-  //
-  // public validateCity() {
-  //   if (!this.city) {
-  //     this.presentToast('Please Enter City');
-  //   } else {
-  //     this.validatePostal();
-  //   }
-  // }
-
   public validatePostal() {
     if (!this.postal) {
       this.presentToast('Please Enter Postal');
@@ -173,6 +141,7 @@ export class PayrollPagePage implements OnInit {
       this.user.transit = this.transit;
       this.user.branch = this.branch;
       this.user.accountNumber = this.accountNumber;
+      this.user.payrollProcessing = true;
       console.log(this.user);
       this.fs.updateStaff(this.user);
     } catch (err) {
